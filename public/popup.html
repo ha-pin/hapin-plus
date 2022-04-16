@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Popup</title>
+        <style>
+            body {
+                padding: 5px;
+                display: flex;
+                flex-direction: column;
+            }
+            .container {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                width: 300px;
+            }
+
+            .title {
+                font-size: 30px;
+                font-weight: 300;
+                margin-left: 10px;
+            }
+
+            .text {
+                font-size: larger;
+                font-weight: 500;
+                color: black;
+            }
+
+            .list {
+                list-style-type: circle;
+                list-style-position: inside;
+                padding: 0;
+                margin: 0;
+            }
+
+            li {
+                margin: 5px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <img
+                src="./assets/icons/title.png"
+                height="40px"
+                alt="Hapin Plus Icon"
+            />
+            <span class="title"> Hapin Plus </span>
+        </div>
+        <p class="text">
+            Hapin Plus 是 哈拼Hapin 开源项目下的浏览器增强插件，基于 Hapin
+            现有开源项目实现。
+        </p>
+        <p class="text">了解更多，可以点击下面的链接：</p>
+        <ul class="list">
+            <li>
+                <a class="text" href="https://github.com/ha-pin/hapin-plus">
+                    Hapin Plus 源码</a
+                >
+            </li>
+            <li>
+                <a class="text" href="https://open-kazakh.vercel.app/hapin/index"
+                    >Open Kazakh | 哈拼</a
+                >
+            </li>
+            <li>
+                <a class="text" href="https://ha-pin.github.io/ime-guide"
+                    >哈拼输入法支持 | hapin-arabic</a
+                >
+            </li>
+            <li>
+                <a class="text" href="https://github.com/ha-pin">哈拼 GitHub</a>
+            </li>
+        </ul>
+    </body>
+</html>

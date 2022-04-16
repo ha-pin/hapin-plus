@@ -13,7 +13,10 @@ function deepCopy(dir, target) {
 		const itemPath = path.join(dir, item)
 		const stat = fs.statSync(itemPath)
 		if (stat.isDirectory()) {
-			deepCopy(itemPath, target)
+			if (!fs.existsSync(path.join(target, item))) {
+				fs.mkdirSync(path.join(target, item))
+			}
+			deepCopy(itemPath, path.join(target, item))
 		} else {
 			const targetPath = path.join(target, item)
 			fs.copyFileSync(itemPath, targetPath)

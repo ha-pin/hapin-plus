@@ -2,7 +2,7 @@ import { defineConfig } from "tsup"
 
 export const tsup = defineConfig({
 	entry: {
-		"backend": "src/backend.ts",
+		"background": "src/background.ts",
 	},
 	clean: false,
 	outDir: "dist",

@@ -4,15 +4,17 @@
   "description": "哈拼浏览器插件",
   "main": "index.js",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run dev:tsup\" \"npm run dev:sync\"",
+    "dev:tsup": "tsup --watch",
+    "dev:sync": "node scripts/sync.mjs",
+    "build": "node scripts/build.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ha-pin/hapin-plus.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Herbert He<Herbert.He0229@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ha-pin/hapin-plus/issues"
   },
@@ -20,6 +22,8 @@
   "devDependencies": {
     "@types/chrome": "^0.0.181",
     "@types/node": "^17.0.24",
+    "chokidar": "^3.5.3",
+    "concurrently": "^7.1.0",
     "tsup": "^5.12.5",
     "typescript": "^4.6.3"
   }
