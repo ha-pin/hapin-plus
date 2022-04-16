@@ -11,6 +11,12 @@ chrome.runtime.onInstalled.addListener(() => {
 		parentId: parent,
 	})
 
+	const transformCyrillicToHapin = chrome.contextMenus.create({
+		id: "hapin-plus-c2h",
+		title: "西里尔字母转化为哈拼",
+		parentId: parent,
+	})
+
 	chrome.contextMenus.onClicked.addListener((info, tab) => {
 		// 触发脚本执行
 		const { menuItemId } = info

@@ -1,4 +1,4 @@
-import { transformCyrillicToArabic } from "hapin-utils"
+import { transformCyrillicToArabic, transformCyrillicToHapin } from "hapin-utils"
 
 /**
  * 可见元素筛选器
@@ -10,10 +10,13 @@ function filter(item: Element) {
 		return false
 	}
 
+	if (["TEXTAREA", "INPUT"].includes(item.nodeName)) {
+		return true
+	}
+
 	const emailRegExp = /([a-zA-Z0-9\.\_\-]+)\@([a-zA-Z0-9]+)\.([a-z]+)/
 
 	// TODO 性能提升，筛选不可见元素
-	// TODO placeholder 转化
 	// TODO title 转化
 
 	if (item.firstChild?.nodeType === Node.TEXT_NODE) {
@@ -30,12 +33,29 @@ function getAllTextNodes() {
 	return doms
 }
 
-function tranformCyrillic2Arabic() {
+function checkChildrenAreAllTextNode(text: string) {
+	if (/\n/.test(text)) {
+		return false
+	}
+
+	return true
+}
+
+function tranformer(action: string, fn: (text: string) => string) {
 	const doms = getAllTextNodes()
 	doms.forEach(item => {
-		item.firstChild.textContent = transformCyrillicToArabic(item.firstChild.textContent)
+		if (["TEXTAREA", "INPUT"].includes(item.nodeName)) {
+			(<HTMLInputElement>item).placeholder = fn((<HTMLInputElement>item).placeholder)
+		} else {
+			if (checkChildrenAreAllTextNode(item.innerText)) {
+				item.innerText = fn(item.innerText)
+			} else {
+				item.firstChild.textContent = fn(item.firstChild.textContent)
+			}
+		}
 	})
-	return "hapin-plus-c2a"
+
+	return action
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -43,7 +63,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (action) {
 		case "hapin-plus-c2a":
 			{
-				sendResponse(tranformCyrillic2Arabic())
+				sendResponse(tranformer(action, transformCyrillicToArabic))
+				break
+			}
+		case "hapin-plus-c2h":
+			{
+				sendResponse(tranformer(action, transformCyrillicToHapin))
 				break
 			}
 		default: {
