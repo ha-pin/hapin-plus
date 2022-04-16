@@ -6,8 +6,21 @@
 	"background": {
 		"service_worker": "background.global.js"
 	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://*/*",
+				"http://*/*"
+			],
+			"js": [
+				"content.global.js"
+			]
+		}
+	],
 	"permissions": [
-		"contextMenus"
+		"contextMenus",
+		"tabs",
+		"activeTab"
 	],
 	"action": {
 		"default_popup": "popup.html",
