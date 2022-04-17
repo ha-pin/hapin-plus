@@ -1,59 +1,57 @@
 import { transformCyrillicToArabic, transformCyrillicToHapin } from "hapin-utils"
+import { fromDomNodeToVNode } from "million/ssr"
+import { render, VElement, VNode } from "million"
 
-/**
- * 可见元素筛选器
- * @param item
- * @returns
- */
-function filter(item: Element) {
-	if (["HTML, LINK, SCRIPT, META, LINK"].includes(item.nodeName)) {
-		return false
+function VNodeModifier(vnode: VNode, fn: (text: string) => string) {
+	let tmp = vnode as VElement
+
+	if (!!(<VElement>vnode)?.props?.placeholder) {
+		tmp.props.placeholder = fn((<VElement>vnode).props.placeholder)
 	}
 
-	if (["TEXTAREA", "INPUT"].includes(item.nodeName)) {
-		return true
+	if ((<VElement>vnode).children.length === 0) {
+		return vnode
 	}
 
-	const emailRegExp = /([a-zA-Z0-9\.\_\-]+)\@([a-zA-Z0-9]+)\.([a-z]+)/
+	tmp.children = (<VElement>vnode).children.map((item) => {
+		if (typeof item === "string") {
+			const EmailRegExp = /([a-zA-Z0-9\.\_\-]+)\@([a-zA-Z0-9]+)\.([a-z]+)/
 
-	// TODO 性能提升，筛选不可见元素
-	// TODO title 转化
-
-	if (item.firstChild?.nodeType === Node.TEXT_NODE) {
-		if (emailRegExp.test(item.firstChild?.textContent)) {
-			return false
-		}
-		return true
-	}
-}
-
-function getAllTextNodes() {
-	const doms = [...document.getElementsByTagName("*")].filter(item => filter(item)
-	)
-	return doms
-}
-
-function checkChildrenAreAllTextNode(text: string) {
-	if (/\n/.test(text)) {
-		return false
-	}
-
-	return true
-}
-
-function tranformer(action: string, fn: (text: string) => string) {
-	const doms = getAllTextNodes()
-	doms.forEach(item => {
-		if (["TEXTAREA", "INPUT"].includes(item.nodeName)) {
-			(<HTMLInputElement>item).placeholder = fn((<HTMLInputElement>item).placeholder)
-		} else {
-			if (checkChildrenAreAllTextNode(item.innerText)) {
-				item.innerText = fn(item.innerText)
-			} else {
-				item.firstChild.textContent = fn(item.firstChild.textContent)
+			if (EmailRegExp.test(item)) {
+				return item
 			}
+
+			return fn(item)
 		}
+
+		if (!!(<VElement>item)?.props?.placeholder) {
+			item.props.placeholder = fn((<VElement>item).props.placeholder)
+		}
+
+		if ((<VElement>item).children.length === 0) {
+			return item
+		}
+
+		return VNodeModifier(item, fn)
 	})
+
+	return tmp
+}
+
+function tranformTitle(fn: (text: string) => string) {
+	const title = document.getElementsByTagName("title")[0]
+	if (!!title?.innerText) {
+		title.innerText = fn(title.innerText)
+	}
+}
+
+// TODO 处理 script 报错
+// TODO 处理页面加载不完全报错
+function tranformer(action: string, fn: (text: string) => string) {
+	const raw = fromDomNodeToVNode(document.body)
+	const after = VNodeModifier(raw, fn)
+	tranformTitle(fn)
+	render(document.body, after, raw)
 
 	return action
 }
